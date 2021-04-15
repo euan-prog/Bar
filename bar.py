@@ -42,7 +42,7 @@ def taskManager():
 		
 	wins = subprocess.run(opwincmd, shell = True, capture_output= True)
 	
-	if (wins.returncode ==0):
+	if (wins.returncode == 0):
 		wins = wins.stdout.decode("utf-8")
 		wins = wins[38:len(wins)].replace("\n", "").replace("\n","").split(", ")
 	
