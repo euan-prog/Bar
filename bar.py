@@ -10,7 +10,7 @@ def getTitle(windowId):
 	
 	if (title.returncode == 0):
 		title = title.stdout.decode("utf-8")
-		title = title[36:len(tit)-2]
+		title = title[36:len(title)-2]
 		return title
 	else:
 		return "title error"
