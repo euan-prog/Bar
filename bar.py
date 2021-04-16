@@ -6,21 +6,17 @@ import sys, subprocess, time
 fd = sys.stdout
 
 def getTitle(windowId):
-	titcmd = ("xprop -id " + windowId + " _OB_APP_GROUP_CLASS")
+	title = subprocess.run("xprop -id " + windowId + " _OB_APP_GROUP_CLASS", shell = True, capture_output=True)
 	
-	tit = subprocess.run(titcmd, shell = True, capture_output=True)
-	
-	if (tit.returncode == 0):
-		tit = tit.stdout.decode("utf-8")
-		tit = tit[36:len(tit)-2]
-		return tit
+	if (title.returncode == 0):
+		title = title.stdout.decode("utf-8")
+		title = title[36:len(tit)-2]
+		return title
 	else:
 		return "title error"
 
 def clock():
-	clockCommand = 'date "+%H:%M %d/%m/%y"'
-
-	clock = subprocess.run(clockCommand, shell = True, capture_output = True)
+	clock = subprocess.run('date "+%H:%M %d/%m/%y"', shell = True, capture_output = True)
 	
 	if (clock.returncode == 0):
 		clock = clock.stdout.decode("utf-8").replace("\n","")
@@ -29,18 +25,14 @@ def clock():
 		return "clock error"
 
 def taskManager():
-	focwincmd = "xprop -root _NET_ACTIVE_WINDOW | cut -d ' ' -f 5"
-	opwincmd = "xprop -root _NET_CLIENT_LIST"
-	foccmd = "wmctrl -a "
-	
-	focwin = subprocess.run(focwincmd, shell = True, capture_output = True)
+	focwin = subprocess.run("xprop -root _NET_ACTIVE_WINDOW | cut -d ' ' -f 5", shell = True, capture_output = True)
 	
 	if (focwin.returncode == 0):
 		focwin = focwin.stdout.decode("utf-8")
 	else:
 		return "Focused window can't be found"
 		
-	wins = subprocess.run(opwincmd, shell = True, capture_output= True)
+	wins = subprocess.run("xprop -root _NET_CLIENT_LIST", shell = True, capture_output= True)
 	
 	if (wins.returncode == 0):
 		wins = wins.stdout.decode("utf-8")
@@ -52,7 +44,7 @@ def taskManager():
 			if (wins[index] == focwin):
 				out += getTitle(wins[index])
 			else:
-				out += "%{A:" + foccmd + wins[index] + " -i:}" + str(getTitle(wins[index])) + "%{A} "
+				out += "%{A:" + "wmctrl -a " + wins[index] + " -i:}" + str(getTitle(wins[index])) + "%{A} "
 			
 		return out.replace("\n","")
 	else:
